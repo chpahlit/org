@@ -26,7 +26,7 @@ jobs:
       # Cache node_modules
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 20.16.0
           cache: 'npm'
 
       - run: npm ci --legacy-peer-deps
@@ -37,3 +37,30 @@ jobs:
       # Nx Affected runs only tasks affected by the changes in this PR/commit. Learn more: https://nx.dev/ci/features/affected
       - run: npx nx affected -t lint test build
       - run: npx nx affected --parallel 1 -t e2e-ci
+
+      # New Step: Build and Push Docker Image for app1
+      - name: Build and Push Docker Image for app1
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: apps/app1/Dockerfile # Path to your Dockerfile for app1
+          push: true
+          tags: your-dockerhub-username/app1:latest # Change to your Docker Hub username
+
+      # Build and push Docker image for app1
+      - name: Build and push Docker image for app1
+        uses: docker/build-push-action@v5
+        with:
+          context: ./app1
+          file: ./app1/Dockerfile
+          push: true
+          tags: your-dockerhub-username/app1:latest
+
+      # New Step: Build and Push Docker Image for app2
+      - name: Build and Push Docker Image for app2
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: apps/app2/Dockerfile # Path to your Dockerfile for app2
+          push: true
+          tags: your-dockerhub-username/app2:latest # Change to your Docker Hub username
