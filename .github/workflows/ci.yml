@@ -56,11 +56,11 @@ jobs:
           push: true
           tags: your-dockerhub-username/app1:latest
 
-      # New Step: Build and Push Docker Image for app2
-      - name: Build and Push Docker Image for app2
-        uses: docker/build-push-action@v4
-        with:
-          context: .
-          file: apps/app2/Dockerfile # Path to your Dockerfile for app2
-          push: true
-          tags: your-dockerhub-username/app2:latest # Change to your Docker Hub username
+      # # New Step: Build and Push Docker Image for app2
+      # - name: Build and Push Docker Image for app2
+      #   uses: docker/build-push-action@v4
+      #   with:
+      #     context: .
+      #     file: apps/app2/Dockerfile # Path to your Dockerfile for app2
+      #     push: true
+      #     tags: your-dockerhub-username/app2:latest # Change to your Docker Hub username
