@@ -7,7 +7,8 @@ COPY package*.json ./
 RUN npm install
 COPY . .
 
-RUN npx nx build app1 --prod
+# Build the Angular Universal application (SSR)
+RUN npm run build:ssr
 
 # Debugging command to list all files and directories under /org
 # RUN echo "Listing all files under /org:" && ls -R /org
@@ -15,16 +16,19 @@ RUN npx nx build app1 --prod
 # Add this step to debug the output directory
 # RUN echo "Listing contents of /org/dist/apps/app1:" && ls -R /org/dist/apps/app1 || echo "Directory /org/dist/apps/app1 does not exist"
 
-# Stage 2: Serve the app
-FROM nginx:alpine
+# Stage 2: Serve the app with Node.js
+FROM node:20-alpine
 
-WORKDIR /usr/share/nginx/html
+WORKDIR /org
 
-# Correct path for COPY command
-COPY --from=builder /org/dist/apps/app1/browser /usr/share/nginx/html
+# Copy the built files from the builder stage
+COPY --from=builder /org/dist/apps/app1 /org/dist/apps/app1
 
-# Expose port 80
-EXPOSE 80
+# Install production dependencies (if any)
+RUN npm install --production
 
-# Start Nginx
-CMD ["nginx", "-g", "daemon off;"]
+# Expose the port that the server will run on
+EXPOSE 4000
+
+# Command to start the Node.js server
+CMD ["node", "dist/apps/app1/server/main.js"]
