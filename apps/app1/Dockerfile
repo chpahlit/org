@@ -9,6 +9,11 @@ COPY . .
 
 RUN npx nx build app1 --prod
 
+# Debugging command to list all files and directories
+RUN echo "Listing all files:" && find /app
+# Add this step to debug the output directory
+RUN echo "Listing contents of /app/dist/apps/app1:" && ls -R /app/dist/apps/app1 || echo "Directory /app/dist/apps/app1 does not exist"
+
 # Stage 2: Serve the app
 FROM nginx:alpine
 
