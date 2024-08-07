@@ -32,11 +32,14 @@ jobs:
           cache: 'npm'
 
       - run: npm ci --legacy-peer-deps
+      # Install Playwright Browsers
+      - run: npx playwright install --with-deps
       - uses: nrwl/nx-set-shas@v4
 
-      # Prepend any command with "nx-cloud record --" to record its logs to Nx Cloud
-      # - run: npx nx-cloud record -- echo Hello World
-      # Nx Affected runs only tasks affected by the changes in this PR/commit. Learn more: https://nx.dev/ci/features/affected
+      # Start Nx Cloud CI run
+      - run: npx nx-cloud start-ci-run --distribute-on="3 linux-medium-js" --stop-agents-after="e2e-ci"
+
+      # Run Nx affected commands
       - run: npx nx affected -t lint test build
       - run: npx nx affected --parallel 1 -t e2e-ci
 
@@ -48,3 +51,18 @@ jobs:
           file: apps/app1/Dockerfile
           push: true
           tags: froschen88/app1:latest
+
+      # # Prepend any command with "nx-cloud record --" to record its logs to Nx Cloud
+      # # - run: npx nx-cloud record -- echo Hello World
+      # # Nx Affected runs only tasks affected by the changes in this PR/commit. Learn more: https://nx.dev/ci/features/affected
+      # - run: npx nx affected -t lint test build
+      # - run: npx nx affected --parallel 1 -t e2e-ci
+
+      # # Build and Push Docker Image for app1
+      # - name: Build and Push Docker Image for app1
+      #   uses: docker/build-push-action@v4
+      #   with:
+      #     context: .
+      #     file: apps/app1/Dockerfile
+      #     push: true
+      #     tags: froschen88/app1:latest
