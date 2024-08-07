@@ -1,21 +1,21 @@
-# Use a base image with Node.js and Angular CLI
-FROM node:20.16.0
+# Stage 1: Build the Angular app
+FROM node:20-alpine AS builder
 
-# Set the working directory
 WORKDIR /app
 
-# Copy package.json and install dependencies
-COPY ../../package.json ../../package-lock.json ./
-RUN npm install
-
-# Copy the app1 code
 COPY . .
 
-# Build the app
-RUN npm run build -- --project=app1
+RUN npm install
+RUN npm run build -- --prod
 
-# Expose the port (adjust to your app’s needs)
-EXPOSE 4200
+# Stage 2: Run the app with a Node server
+FROM node:20-alpine
 
-# Serve the app
-CMD ["npx", "nx", "serve", "app1"]
+WORKDIR /app
+
+COPY --from=builder /app/dist/apps/app1 /app/browser
+COPY --from=builder /app/dist/apps/app1-server /app
+
+RUN npm install
+
+CMD ["node", "server.js"]
