@@ -24,7 +24,7 @@ WORKDIR /usr/share/nginx/html
 COPY --from=builder /org/dist/apps/app1/browser /usr/share/nginx/html
 
 # Expose port 80
-EXPOSE 80
+EXPOSE 4200
 
 # Start Nginx
 CMD ["nginx", "-g", "daemon off;"]

@@ -67,11 +67,11 @@ jobs:
 
       - name: Deploy and Run Docker Container
         run: |
-          docker run -d -p 4000:4000 froschen88/app1:latest
+          docker run -d -p 4200:4200 froschen88/app1:latest
   
       - name: Output Deployment URL
         run: |
-          echo "Application deployed at: http://localhost:4000"
+          echo "Application deployed at: http://localhost:4200"
 
       # # Prepend any command with "nx-cloud record --" to record its logs to Nx Cloud
       # # - run: npx nx-cloud record -- echo Hello World
