@@ -1,26 +1,33 @@
-# Stage 1: Build the Angular app
+# Stage 1: Build the Angular application and server
 FROM node:20-alpine AS builder
 
 WORKDIR /app
-
 
 # Install dependencies
 COPY package*.json ./
 RUN npm install
 
+# Copy source files
 COPY . .
 
-# Build the Angular application
-RUN npx nx build app1 --prod
+# Build the Angular application and server
+RUN npm run build -- --prod
+RUN npm run build:ssr
 
-# Stage 2: Serve the application with a Node server (or use an alternative as needed)
-FROM nginx:alpine
+# Stage 2: Serve the Angular application with Node.js
+FROM node:20-alpine
 
-# Copy build artifacts from the previous stage
-COPY --from=builder /app/dist/app1 /usr/share/nginx/html
+WORKDIR /app
 
-# Expose port 80
-EXPOSE 80
+# Copy the build artifacts from the builder stage
+COPY --from=builder /app/dist/apps/app1 /app/dist/apps/app1
+COPY --from=builder /app/dist/server /app/dist/server
+COPY package*.json ./
+RUN npm install --only=production
 
-# Start NGINX
-CMD ["nginx", "-g", "daemon off;"]
+# Copy server entry point
+COPY ./server.ts /app
+
+# Run the server
+EXPOSE 4000
+CMD ["node", "dist/server"]
