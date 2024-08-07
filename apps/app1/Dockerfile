@@ -1,22 +1,23 @@
 # Stage 1: Build the application
 FROM node:20-alpine AS builder
 
-WORKDIR /app
+WORKDIR /org
 
 COPY package*.json ./
 RUN npm install
 COPY . .
 
-RUN npx nx build app1
+RUN npx nx build app1 --prod
 
 # Stage 2: Serve the app
-FROM node:20-alpine
+FROM nginx:alpine
 
 WORKDIR /org
 
-COPY --from=builder /org/dist/apps/app1 /org/dist/apps/app1
-COPY --from=builder /org/apps/app1/server.ts /org/apps/app1/server.ts
+COPY --from=builder /app/dist/apps/app1/browser /usr/share/nginx/html
 
-RUN npm install --only=production
+# Expose port 80
+EXPOSE 80
 
-CMD ["node", "server.ts"]
+# Start Nginx
+CMD ["nginx", "-g", "daemon off;"]
