@@ -7,7 +7,7 @@ COPY package*.json ./
 RUN npm install
 COPY . .
 
-RUN npm run build -- --prod
+RUN npx nx build app1
 
 # Stage 2: Serve the app
 FROM node:20-alpine
