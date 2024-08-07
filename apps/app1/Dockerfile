@@ -3,19 +3,24 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
+
+# Install dependencies
+COPY package*.json ./
+RUN npm install
+
 COPY . .
 
-RUN npm install
-RUN npm run build -- --prod
+# Build the Angular application
+RUN npx nx build app1 --prod
 
-# Stage 2: Run the app with a Node server
-FROM node:20-alpine
+# Stage 2: Serve the application with a Node server (or use an alternative as needed)
+FROM nginx:alpine
 
-WORKDIR /app
+# Copy build artifacts from the previous stage
+COPY --from=builder /app/dist/app1 /usr/share/nginx/html
 
-COPY --from=builder /app/dist/apps/app1 /app/browser
-COPY --from=builder /app/dist/apps/app1-server /app
+# Expose port 80
+EXPOSE 80
 
-RUN npm install
-
-CMD ["node", "server.js"]
+# Start NGINX
+CMD ["nginx", "-g", "daemon off;"]
