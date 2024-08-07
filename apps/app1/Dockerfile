@@ -18,9 +18,10 @@ RUN echo "Listing contents of /org/dist/apps/app1:" && ls -R /org/dist/apps/app1
 # Stage 2: Serve the app
 FROM nginx:alpine
 
-WORKDIR /org
+WORKDIR /usr/share/nginx/html
 
-COPY --from=builder /app/dist/apps/app1/browser /usr/share/nginx/html
+# Correct path for COPY command
+COPY --from=builder /org/dist/apps/app1/browser /usr/share/nginx/html
 
 # Expose port 80
 EXPOSE 80
