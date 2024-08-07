@@ -10,10 +10,10 @@ COPY . .
 RUN npx nx build app1 --prod
 
 # Debugging command to list all files and directories under /org
-RUN echo "Listing all files under /org:" && ls -R /org
+# RUN echo "Listing all files under /org:" && ls -R /org
 
 # Add this step to debug the output directory
-RUN echo "Listing contents of /org/dist/apps/app1:" && ls -R /org/dist/apps/app1 || echo "Directory /org/dist/apps/app1 does not exist"
+# RUN echo "Listing contents of /org/dist/apps/app1:" && ls -R /org/dist/apps/app1 || echo "Directory /org/dist/apps/app1 does not exist"
 
 # Stage 2: Serve the app
 FROM nginx:alpine
