@@ -12,10 +12,10 @@ RUN npm run build -- --prod
 # Stage 2: Serve the app
 FROM node:20-alpine
 
-WORKDIR /app
+WORKDIR /org
 
-COPY --from=builder /app/dist/apps/app1 /app/dist/apps/app1
-COPY --from=builder /app/apps/app1/server.ts /app/server.ts
+COPY --from=builder /org/dist/apps/app1 /org/dist/apps/app1
+COPY --from=builder /org/apps/app1/server.ts /org/apps/app1/server.ts
 
 RUN npm install --only=production
 
