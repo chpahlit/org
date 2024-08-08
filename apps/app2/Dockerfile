@@ -1,7 +1,7 @@
 # Stage 1: Build the Angular application
 FROM node:20.16.0 as build
 
-WORKDIR /usr/src/app
+WORKDIR /org
 
 # Copy package.json and package-lock.json
 COPY package*.json ./
