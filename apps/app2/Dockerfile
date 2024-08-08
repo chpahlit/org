@@ -15,6 +15,13 @@ COPY . .
 # Build the Angular application
 RUN npx nx build app2 --prod
 
+# Debugging command to list all files and directories under /org
+RUN echo "Listing all files under /org:" && ls -R /org
+
+# Add this step to debug the output directory
+RUN echo "Listing contents of /org/dist/apps/app2:" && ls -R /org/dist/apps/app2 || echo "Directory /org/dist/apps/app2 does not exist"
+
+
 # Stage 2: Serve the application with Nginx
 FROM nginx:1.21-alpine
 
