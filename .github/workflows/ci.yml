@@ -13,10 +13,11 @@ permissions:
   contents: read
 
 jobs:
-  main:
+  build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout Repository
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
@@ -26,19 +27,34 @@ jobs:
       # - run: npx nx-cloud start-ci-run --distribute-on="3 linux-medium-js" --stop-agents-after="e2e-ci"
 
       # Cache node_modules
-      - uses: actions/setup-node@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: 20.16.0
           cache: 'npm'
 
-      - run: npm ci --legacy-peer-deps
+      - name: Install Dependencies
+        run: npm ci --legacy-peer-deps
+      # Install Playwright Browsers
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
       - uses: nrwl/nx-set-shas@v4
 
-      # Prepend any command with "nx-cloud record --" to record its logs to Nx Cloud
-      # - run: npx nx-cloud record -- echo Hello World
-      # Nx Affected runs only tasks affected by the changes in this PR/commit. Learn more: https://nx.dev/ci/features/affected
-      - run: npx nx affected -t lint test build
-      - run: npx nx affected --parallel 1 -t e2e-ci
+      # Start Nx Cloud CI run
+      # - run: npx nx-cloud start-ci-run --distribute-on="3 linux-medium-js" --stop-agents-after="e2e-ci"
+
+      # Run Nx affected commands
+      - name: Lint, Test, and Build
+        run: npx nx affected -t lint test build
+      - name: Run E2E Tests
+        run: npx nx affected --parallel 1 -t e2e-ci
+
+      # Login to Docker Hub with constant token value
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: froschen88
+          password: ${{ secrets.DOCKER_HUB_TOKEN }}
 
       # Build and Push Docker Image for app1
       - name: Build and Push Docker Image for app1
@@ -48,3 +64,32 @@ jobs:
           file: apps/app1/Dockerfile
           push: true
           tags: froschen88/app1:latest
+
+      - name: Deploy and Run Docker Container
+        run: |
+          docker run -d -p 80:80 froschen88/app1:latest
+
+      - name: Output Deployment URL
+        run: |
+          echo "Application deployed at: http://localhost:4200"
+
+      # Build and Push Docker Image for app2
+      - name: Build and Push Docker Image for app2
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: apps/app2/Dockerfile
+          push: true
+          tags: froschen88/app2:latest
+
+      # Deploy and Run Docker Container for app2
+      - name: Deploy and Run Docker Container for app2
+        run: |
+          docker run -d -p 8080:80 froschen88/app2:latest
+
+      - name: Output Deployment URL for app2
+        run: |
+          echo "Application deployed at: http://localhost:8080"
+
+      # # Prepend any command with "nx-cloud record --" to record its logs to Nx Cloud
+      # # - run: npx nx-cloud record -- echo Hello World

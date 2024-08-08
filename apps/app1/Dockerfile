@@ -1,21 +1,30 @@
-# Stage 1: Build the Angular app
+# Stage 1: Build the application
 FROM node:20-alpine AS builder
 
-WORKDIR /app
+WORKDIR /org
 
+COPY package*.json ./
+RUN npm install
 COPY . .
 
-RUN npm install
-RUN npm run build -- --prod
+RUN npx nx build app1 --prod
 
-# Stage 2: Run the app with a Node server
-FROM node:20-alpine
+# Debugging command to list all files and directories under /org
+# RUN echo "Listing all files under /org:" && ls -R /org
 
-WORKDIR /app
+# Add this step to debug the output directory
+# RUN echo "Listing contents of /org/dist/apps/app1:" && ls -R /org/dist/apps/app1 || echo "Directory /org/dist/apps/app1 does not exist"
 
-COPY --from=builder /app/dist/apps/app1 /app/browser
-COPY --from=builder /app/dist/apps/app1-server /app
+# Stage 2: Serve the app
+FROM nginx:alpine
 
-RUN npm install
+WORKDIR /usr/share/nginx/html
 
-CMD ["node", "server.js"]
+# Correct path for COPY command
+COPY --from=builder /org/dist/apps/app1 /usr/share/nginx/html
+
+# Expose port 80
+EXPOSE 80
+
+# Start Nginx
+CMD ["nginx", "-g", "daemon off;"]

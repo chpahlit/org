@@ -3,12 +3,8 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "ng": "ng",
-    "start": "ng serve",
-    "build": "ng build",
-    "test": "ng test",
-    "lint": "ng lint",
-    "e2e": "ng e2e"
+    "build:ssr": "nx build app1 --prod && nx build app1-server --prod",
+    "serve:ssr": "node dist/apps/app1/server/main.js"
   },
   "private": true,
   "dependencies": {
@@ -24,6 +20,7 @@
     "@angular/ssr": "~18.1.0",
     "@nx/angular": "19.5.6",
     "express": "~4.18.2",
+    "playwright": "^1.46.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.14.3"
