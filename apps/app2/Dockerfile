@@ -26,10 +26,10 @@ RUN echo "Listing contents of /org/dist/apps/app2:" && ls -R /org/dist/apps/app2
 FROM nginx:1.21-alpine
 
 # Copy the built application from the previous stage
-COPY --from=build /org/dist/app/dist/app2/browser /usr/share/nginx/html
+COPY --from=build /org/dist/apps/app2/browser /usr/share/nginx/html
 
 # Copy Nginx configuration file
-# COPY nginx.conf /etc/nginx/nginx.conf
+COPY nginx.conf /etc/nginx/nginx.conf
 
 # Expose port 80
 EXPOSE 80
