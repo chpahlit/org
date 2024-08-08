@@ -19,7 +19,7 @@ RUN npx nx build app2 --prod
 FROM nginx:1.21-alpine
 
 # Copy the built application from the previous stage
-COPY --from=build /usr/src/app/dist/app2 /usr/share/nginx/html
+COPY --from=build /usr/src/app/dist/app2/browser /usr/share/nginx/html
 
 # Copy Nginx configuration file
 # COPY nginx.conf /etc/nginx/nginx.conf
