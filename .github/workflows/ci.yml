@@ -67,23 +67,29 @@ jobs:
 
       - name: Deploy and Run Docker Container
         run: |
-          docker run -d -p 4200:4200 froschen88/app1:latest
-  
+          docker run -d -p 80:80 froschen88/app1:latest
+
       - name: Output Deployment URL
         run: |
           echo "Application deployed at: http://localhost:4200"
 
+      # Build and Push Docker Image for app2
+      - name: Build and Push Docker Image for app2
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: apps/app2/Dockerfile
+          push: true
+          tags: froschen88/app2:latest
+
+      # Deploy and Run Docker Container for app2
+      - name: Deploy and Run Docker Container for app2
+        run: |
+          docker run -d -p 8080:80 froschen88/app2:latest
+
+      - name: Output Deployment URL for app2
+        run: |
+          echo "Application deployed at: http://localhost:8080"
+
       # # Prepend any command with "nx-cloud record --" to record its logs to Nx Cloud
       # # - run: npx nx-cloud record -- echo Hello World
-      # # Nx Affected runs only tasks affected by the changes in this PR/commit. Learn more: https://nx.dev/ci/features/affected
-      # - run: npx nx affected -t lint test build
-      # - run: npx nx affected --parallel 1 -t e2e-ci
-
-      # # Build and Push Docker Image for app1
-      # - name: Build and Push Docker Image for app1
-      #   uses: docker/build-push-action@v4
-      #   with:
-      #     context: .
-      #     file: apps/app1/Dockerfile
-      #     push: true
-      #     tags: froschen88/app1:latest
