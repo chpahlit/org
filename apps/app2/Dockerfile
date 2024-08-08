@@ -13,7 +13,7 @@ RUN npm ci --legacy-peer-deps
 COPY . .
 
 # Build the Angular application
-RUN npm run build --prod
+RUN npx nx build app2 --prod
 
 # Stage 2: Serve the application with Nginx
 FROM nginx:1.21-alpine
@@ -22,7 +22,7 @@ FROM nginx:1.21-alpine
 COPY --from=build /usr/src/app/dist/app2 /usr/share/nginx/html
 
 # Copy Nginx configuration file
-# COPY nginx.conf /etc/nginx/nginx.conf
+COPY nginx.conf /etc/nginx/nginx.conf
 
 # Expose port 80
 EXPOSE 80
