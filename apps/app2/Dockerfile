@@ -29,7 +29,7 @@ FROM nginx:1.21-alpine
 COPY --from=build /org/dist/apps/app2/browser /usr/share/nginx/html
 
 # Copy Nginx configuration file
-COPY nginx.conf /etc/nginx/nginx.conf
+COPY apps/app2/nginx.conf /etc/nginx/nginx.conf
 
 # Expose port 80
 EXPOSE 80
