@@ -21,7 +21,7 @@ FROM nginx:alpine
 WORKDIR /usr/share/nginx/html
 
 # Correct path for COPY command
-COPY --from=builder /org/dist/apps/app1/browser /usr/share/nginx/html
+COPY --from=builder /org/dist/apps/app1 /usr/share/nginx/html
 
 # Expose port 80
 EXPOSE 80
